@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weather App</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:300px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+h1{
+    margin-bottom:15px;
+}
+
+input{
+    padding:10px;
+    width:70%;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    background:#4facfe;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#3a8be0;
+}
+
+.weather-icon{
+    font-size:50px;
+    margin:10px 0;
+}
+
+#weather p{
+    margin:5px 0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌦 Weather App</h1>
+
+<input type="text" id="cityInput" placeholder="Enter city name">
+<button onclick="getWeather()">Search</button>
+
+<div id="weather"></div>
+
+</div>
+
+<script>
+
+const API_KEY = "86b7b3ca3b5aac490cd8f91f34341a79";
+
+function getWeather(){
+
+const city = document.getElementById("cityInput").value;
+const weatherDiv = document.getElementById("weather");
+
+if(city === ""){
+weatherDiv.innerHTML = "Please enter city name";
+return;
+}
+
+fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`)
+.then(response => response.json())
+.then(data => {
+
+let icon = "☀️";
+
+const condition = data.weather[0].main.toLowerCase();
+
+if(condition.includes("cloud")) icon="☁️";
+if(condition.includes("rain")) icon="🌧";
+if(condition.includes("storm")) icon="⛈";
+if(condition.includes("snow")) icon="❄️";
+
+weatherDiv.innerHTML = `
+<h2>${data.name}</h2>
+<div class="weather-icon">${icon}</div>
+<p>🌡 Temperature: ${data.main.temp} °C</p>
+<p>🌥 Condition: ${data.weather[0].description}</p>
+<p>💧 Humidity: ${data.main.humidity}%</p>
+<p>🌬 Wind Speed: ${data.wind.speed} m/s</p>
+`;
+
+})
+.catch(()=>{
+weatherDiv.innerHTML="City not found";
+});
+
+}
+
+</script>
+
+</body>
+</html>
